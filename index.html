@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="lt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>boob.digital</title>
+
+<!--
+  GOOGLE ANALYTICS (GA4) — įklijuok savo Measurement ID ir nukomentuok:
+
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXX"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-XXXXXXX');
+  </script>
+-->
+
+<style>
+  :root{ --dur:6s; }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html,body{
+    width:100%;height:100%;
+    background:#0d0d0f;
+    overflow:hidden;
+    display:flex;align-items:center;justify-content:center;
+  }
+
+  .stage{
+    width:min(86vw,420px);
+    aspect-ratio:1/1;
+    display:flex;align-items:center;justify-content:center;
+  }
+
+  .tv{
+    position:relative;
+    width:100%;
+    background:#d9a23b;
+    background:linear-gradient(160deg,#e3ad44,#c4881f);
+    border-radius:22px;
+    padding:7% 7% 13%;
+    box-shadow:0 20px 50px rgba(0,0,0,0.55), inset 0 0 0 3px rgba(0,0,0,0.15);
+    animation:tv-shake var(--dur) infinite;
+  }
+
+  /* legs */
+  .tv::before, .tv::after{
+    content:"";
+    position:absolute;
+    bottom:-7%;
+    width:9%;
+    height:9%;
+    background:#8a611a;
+    border-radius:0 0 6px 6px;
+  }
+  .tv::before{ left:14%; transform:skew(-8deg); }
+  .tv::after{ right:14%; transform:skew(8deg); }
+
+  /* antenna */
+  .antenna{
+    position:absolute;
+    top:-22%;
+    left:50%;
+    width:2px;
+    height:26%;
+    background:#444;
+    transform-origin:bottom center;
+    animation:antenna-wiggle 2.6s ease-in-out infinite;
+  }
+  .antenna.l{ transform:translateX(-3px) rotate(-22deg); }
+  .antenna.r{ transform:translateX(3px) rotate(22deg); animation-delay:0.3s; }
+
+  .knob{
+    position:absolute;
+    bottom:5%;
+    width:8%;
+    height:8%;
+    border-radius:50%;
+    background:#5b3e10;
+    box-shadow:inset 0 2px 3px rgba(255,255,255,0.25);
+  }
+  .knob.k1{ right:10%; }
+  .knob.k2{ right:23%; }
+
+  .light{
+    position:absolute;
+    bottom:6.5%;
+    left:11%;
+    width:3.5%;
+    height:3.5%;
+    border-radius:50%;
+    background:#ff3b3b;
+    box-shadow:0 0 6px 2px rgba(255,60,60,0.7);
+    animation:blink 1.4s steps(1) infinite;
+  }
+
+  .screen{
+    position:relative;
+    width:100%;
+    aspect-ratio:4/3;
+    border-radius:10px;
+    background:#060606;
+    overflow:hidden;
+    box-shadow:inset 0 0 0 10px #1a1a1a, inset 0 0 30px rgba(0,0,0,0.9);
+  }
+
+  canvas.grain{
+    position:absolute; inset:0;
+    width:100%; height:100%;
+    image-rendering:pixelated;
+    opacity:0.5;
+    mix-blend-mode:screen;
+  }
+
+  .scanlines{
+    position:absolute; inset:0;
+    background:repeating-linear-gradient(
+      to bottom, rgba(255,255,255,0.06) 0px, rgba(255,255,255,0.06) 1px,
+      transparent 1px, transparent 3px
+    );
+    pointer-events:none;
+  }
+
+  .interference{
+    position:absolute; inset:0;
+    background:repeating-linear-gradient(
+      90deg, #fff 0 2%, #222 2% 6%, #888 6% 9%, #111 9% 14%
+    );
+    mix-blend-mode:difference;
+    animation:interference-cycle var(--dur) infinite, interference-jitter 0.12s steps(2) infinite;
+  }
+
+  .eyes{
+    position:absolute; inset:0;
+    display:flex; align-items:center; justify-content:center;
+    gap:14%;
+    animation:eyes-cycle var(--dur) infinite;
+  }
+  .eye{
+    width:30%; aspect-ratio:1/1;
+    background:#f4f1ea;
+    border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+    box-shadow:0 0 0 3px rgba(0,0,0,0.4);
+    animation:eye-widen var(--dur) infinite;
+  }
+  .pupil{
+    width:42%; aspect-ratio:1/1;
+    background:#0d0d0f;
+    border-radius:50%;
+    animation:look-around var(--dur) infinite;
+  }
+
+  .flash{
+    position:absolute; inset:0;
+    background:#fff;
+    opacity:0;
+    animation:flash-cycle var(--dur) infinite;
+  }
+
+  .logo{
+    position:absolute; inset:0;
+    display:flex;align-items:center;justify-content:center;
+    font-family:'Courier New', monospace;
+    font-weight:700;
+    font-size:14%;
+    letter-spacing:1px;
+    color:#f2ede4;
+    opacity:0;
+    animation:logo-cycle var(--dur) infinite, logo-jitter 0.15s steps(2) infinite;
+    text-shadow:
+      2px 0 #ff2d78,
+      -2px 0 #2bf0e0;
+  }
+
+  @keyframes tv-shake{
+    0%,47%{ transform:none; }
+    48%{ transform:translate(-5px,3px) rotate(-1.2deg); }
+    49%{ transform:translate(5px,-2px) rotate(1.2deg); }
+    50%{ transform:translate(-3px,2px) rotate(-0.5deg); }
+    51%,100%{ transform:none; }
+  }
+
+  @keyframes antenna-wiggle{
+    0%,100%{ rotate:0deg; }
+    50%{ rotate:3deg; }
+  }
+
+  @keyframes blink{
+    0%,90%{ opacity:1; }
+    95%{ opacity:0.2; }
+  }
+
+  @keyframes interference-cycle{
+    0%{ opacity:1; }
+    11%{ opacity:1; }
+    16%{ opacity:0; }
+    83%{ opacity:0; }
+    89%{ opacity:1; }
+    100%{ opacity:1; }
+  }
+  @keyframes interference-jitter{
+    0%{ transform:translateX(0); }
+    100%{ transform:translateX(-4%); }
+  }
+
+  @keyframes eyes-cycle{
+    0%,15%{ opacity:0; }
+    17%{ opacity:1; }
+    46%{ opacity:1; }
+    50%,100%{ opacity:0; }
+  }
+  @keyframes eye-widen{
+    0%,38%{ transform:scale(1); }
+    44%{ transform:scale(1.35); }
+    50%,100%{ transform:scale(1); }
+  }
+  @keyframes look-around{
+    0%,18%{ transform:translateX(0); }
+    24%{ transform:translateX(-25%); }
+    30%{ transform:translateX(-25%); }
+    36%{ transform:translateX(25%); }
+    42%{ transform:translateX(25%); }
+    46%,100%{ transform:translateX(0); }
+  }
+
+  @keyframes flash-cycle{
+    0%,46%{ opacity:0; }
+    48%{ opacity:0.95; }
+    52%{ opacity:0; }
+    100%{ opacity:0; }
+  }
+
+  @keyframes logo-cycle{
+    0%,51%{ opacity:0; transform:scale(0.85); }
+    54%{ opacity:1; transform:scale(1); }
+    78%{ opacity:1; transform:scale(1); }
+    82%{ opacity:0; transform:scale(1.05); }
+    100%{ opacity:0; }
+  }
+  @keyframes logo-jitter{
+    0%{ transform:translate(0,0); }
+    100%{ transform:translate(1px,-1px); }
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    .tv, .interference, .eyes, .eye, .pupil, .flash, .logo, .antenna{
+      animation:none !important;
+    }
+    .logo{ opacity:1; }
+    .eyes{ opacity:1; }
+  }
+</style>
+</head>
+<body>
+
+<div class="stage">
+  <div class="tv">
+    <div class="antenna l"></div>
+    <div class="antenna r"></div>
+    <div class="screen">
+      <canvas class="grain" id="grain"></canvas>
+      <div class="scanlines"></div>
+      <div class="interference"></div>
+      <div class="eyes">
+        <div class="eye"><div class="pupil"></div></div>
+        <div class="eye"><div class="pupil"></div></div>
+      </div>
+      <div class="flash"></div>
+      <div class="logo">boob.digital</div>
+    </div>
+    <div class="knob k1"></div>
+    <div class="knob k2"></div>
+    <div class="light"></div>
+  </div>
+</div>
+
+<script>
+  const canvas = document.getElementById('grain');
+  const ctx = canvas.getContext('2d');
+  const W = 48, H = 36;
+  canvas.width = W; canvas.height = H;
+
+  function drawNoise(){
+    const img = ctx.createImageData(W,H);
+    for(let i=0;i<img.data.length;i+=4){
+      const v = Math.random()*255;
+      img.data[i]=v; img.data[i+1]=v; img.data[i+2]=v; img.data[i+3]=255;
+    }
+    ctx.putImageData(img,0,0);
+  }
+  setInterval(drawNoise, 90);
+  drawNoise();
+</script>
+
+</body>
+</html>
